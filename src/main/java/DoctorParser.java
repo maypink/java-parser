@@ -1,23 +1,15 @@
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.opencsv.CSVWriter;
 
 
-public class Parser {
+public class DoctorParser extends BaseParser{
 
-    private static Document getPage(String url) throws IOException {
-        Document page = Jsoup.parse(new URL(url), 3000);
-        return page;
-    }
-
-    private static void getAllDoctorsInfo() throws IOException {
+    @Override
+    public void getAllInfo() throws IOException {
         String baseUrl = "https://ctoma.ru";
         String additionalUrl = "/personal/index.php?PAGEN_1=";
         Document firstPage = getPage(baseUrl + "/personal/");
@@ -50,19 +42,12 @@ public class Parser {
         for (int i = 1; i<doctorFieldsStr.length; i++) {
             doctorFieldsStr[i] = doctorFields.get(i-1).select("div").get(1).text();
         }
-        writeToCsv(doctorFieldsStr);
+        writeToCsv(doctorFieldsStr, "doctors.csv");
 
-    }
-
-    private static void writeToCsv(String [] record) throws IOException {
-        String csv = "data.csv";
-        CSVWriter writer = new CSVWriter(new FileWriter(csv, true));
-        writer.writeNext(record);
-        writer.close();
     }
 
     public static void main( String[] args ) throws IOException {
-        getAllDoctorsInfo();
+        new DoctorParser().getAllInfo();
     }
 
 }
